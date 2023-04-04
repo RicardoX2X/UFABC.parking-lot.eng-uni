@@ -43,102 +43,6 @@ uint32_t status[8] = {verde,verde,verde,verde,verde,verde,verde,verde};
 bool last_reading[8] = {LOW,LOW,LOW,LOW,LOW,LOW,LOW,LOW};
 bool reading[8] = {};
 
-void setup() //Incia o display
-{  
-  lcd.init(); // Serve para iniciar a comunicação com o display já conectado
-  lcd.backlight(); // Serve para ligar a luz do display
-  lcd.clear(); // Serve para limpar a tela do display
-  strip.begin();
-  strip.show();
-  Serial.begin(9600);
-  while (!Serial);
-  SPI.begin();      // Inicia  SPI bus
-  mfrc522.PCD_Init();   // Inicia MFRC522
-  for(int i=inMin; i<inMax; i++)
-  {
-     pinMode(i, INPUT_PULLUP);
-  }
-
-  pinMode(A3, OUTPUT);
-  
-  mensageminicial();
-  for(int i=0; i<8; i++)
-  {
-    strip.setPixelColor(i, status[i]);
-    strip.show();
-  }
-}
-void loop() 
-{  
-  for(int i=inMin; i<inMax; i++)
-  {
-    int button_index = 9-i;
-    reading[button_index] = digitalRead(i);
-    if (reading[button_index] != last_reading[button_index])
-    {      
-      last_reading[button_index]=reading[button_index];
-      acende_led(button_index);
-    }
-  }	
-  
-  if ((millis() - millisTarefa1) > tempo_tarefa1)
-  {
-    mensageminicial();
-  	millisTarefa1 = millis();
-  }
-  String teste = "";
-  if (!mfrc522.PICC_IsNewCardPresent() || !mfrc522.PICC_ReadCardSerial()) // Look for new cards
-  {
-  }
-  else
-  {
-    teste = le_o_modulo_RFID();
-    Serial.print(teste);
-    //lcd.setCursor(0, 1); //Coloca o cursor do display na coluna 1 e linha 2
-    //lcd.print(teste);  // Comando de saida com a mensagem que deve aparecer na coluna 2 e linha 2
-    if(teste == " 4B 47 F3 3E"){
-      lcd.clear();
-      lcd.setCursor(4, 0); //Coloca o cursor do display na coluna 1 e linha 2
-      lcd.print("BEM VINDO:");
-      lcd.setCursor(4, 1); //Coloca o cursor do display na coluna 1 e linha 2
-      lcd.print("RICARDO");
-      Serial.print(kDelimiter);
-      Serial.println("BEM VINDO RICARDO");
-    }
-    else if(teste == " 67 70 E7 F3" ){
-      lcd.clear();
-      lcd.setCursor(4, 0); //Coloca o cursor do display na coluna 1 e linha 2
-      lcd.print("BEM VINDO:");
-      lcd.setCursor(4, 1); //Coloca o cursor do display na coluna 1 e linha 2
-      lcd.print("BEATRIZ");
-      Serial.print(kDelimiter);
-      Serial.println("BEM VINDO BEATRIZ");
-    }
-    else {
-      lcd.clear();
-      lcd.setCursor(1, 0); //Coloca o cursor do display na coluna 1 e linha 2
-      lcd.print("ACESSO NEGADO:");
-      lcd.setCursor(4, 1); //Coloca o cursor do display na coluna 1 e linha 2
-      lcd.print("REGINALDO");
-      Serial.print(kDelimiter);
-      Serial.println("ACESSO NEGADO REGINALDO");
-    }
-    mfrc522.PICC_HaltA();
-  }
-  
-  le_a_serial();
-  //Serial.println(teste);
-  atualiza_vagas_lcd();
-  processIncomingSerial();
-  //processOutgoingSerial();
-  //if (arr[0]!=""){
-  //Serial.print(arr[0]);
-  //}
-  //if ( strcmp ("2", arr[0]) == 0){ 
-  //    Serial.println("working");
-  //}
-}
-
 void contador (int vaga)
 {
   strip.clear();
@@ -308,4 +212,100 @@ void parseData(char data[]) // Seperate the data at each delimeter
       token = strtok(NULL, ","); // Conintue to the next delimeter
       index++; // incremenet index to store next value
     }
+}
+
+void setup() //Incia o display
+{  
+  lcd.init(); // Serve para iniciar a comunicação com o display já conectado
+  lcd.backlight(); // Serve para ligar a luz do display
+  lcd.clear(); // Serve para limpar a tela do display
+  strip.begin();
+  strip.show();
+  Serial.begin(9600);
+  while (!Serial);
+  SPI.begin();      // Inicia  SPI bus
+  mfrc522.PCD_Init();   // Inicia MFRC522
+  for(int i=inMin; i<inMax; i++)
+  {
+     pinMode(i, INPUT_PULLUP);
+  }
+
+  pinMode(A3, OUTPUT);
+  
+  mensageminicial();
+  for(int i=0; i<8; i++)
+  {
+    strip.setPixelColor(i, status[i]);
+    strip.show();
+  }
+}
+void loop() 
+{  
+  for(int i=inMin; i<inMax; i++)
+  {
+    int button_index = 9-i;
+    reading[button_index] = digitalRead(i);
+    if (reading[button_index] != last_reading[button_index])
+    {      
+      last_reading[button_index]=reading[button_index];
+      acende_led(button_index);
+    }
+  }	
+  
+  if ((millis() - millisTarefa1) > tempo_tarefa1)
+  {
+    mensageminicial();
+  	millisTarefa1 = millis();
+  }
+  String teste = "";
+  if (!mfrc522.PICC_IsNewCardPresent() || !mfrc522.PICC_ReadCardSerial()) // Look for new cards
+  {
+  }
+  else
+  {
+    teste = le_o_modulo_RFID();
+    Serial.print(teste);
+    //lcd.setCursor(0, 1); //Coloca o cursor do display na coluna 1 e linha 2
+    //lcd.print(teste);  // Comando de saida com a mensagem que deve aparecer na coluna 2 e linha 2
+    if(teste == " 4B 47 F3 3E"){
+      lcd.clear();
+      lcd.setCursor(4, 0); //Coloca o cursor do display na coluna 1 e linha 2
+      lcd.print("BEM VINDO:");
+      lcd.setCursor(4, 1); //Coloca o cursor do display na coluna 1 e linha 2
+      lcd.print("RICARDO");
+      Serial.print(kDelimiter);
+      Serial.println("BEM VINDO RICARDO");
+    }
+    else if(teste == " 67 70 E7 F3" ){
+      lcd.clear();
+      lcd.setCursor(4, 0); //Coloca o cursor do display na coluna 1 e linha 2
+      lcd.print("BEM VINDO:");
+      lcd.setCursor(4, 1); //Coloca o cursor do display na coluna 1 e linha 2
+      lcd.print("BEATRIZ");
+      Serial.print(kDelimiter);
+      Serial.println("BEM VINDO BEATRIZ");
+    }
+    else {
+      lcd.clear();
+      lcd.setCursor(1, 0); //Coloca o cursor do display na coluna 1 e linha 2
+      lcd.print("ACESSO NEGADO:");
+      lcd.setCursor(4, 1); //Coloca o cursor do display na coluna 1 e linha 2
+      lcd.print("REGINALDO");
+      Serial.print(kDelimiter);
+      Serial.println("ACESSO NEGADO REGINALDO");
+    }
+    mfrc522.PICC_HaltA();
+  }
+  
+  le_a_serial();
+  //Serial.println(teste);
+  atualiza_vagas_lcd();
+  processIncomingSerial();
+  //processOutgoingSerial();
+  //if (arr[0]!=""){
+  //Serial.print(arr[0]);
+  //}
+  //if ( strcmp ("2", arr[0]) == 0){ 
+  //    Serial.println("working");
+  //}
 }

@@ -22,10 +22,10 @@ uint32_t millisTarefa1 = 0;
 uint32_t tempo_tarefa1 = 10000;
 int inMin = 2; // Lowest input pin
 int inMax = 10; // Highest input pin
-uint32_t verde = strip.Color(0, 255, 0);
-uint32_t vermelho = strip.Color(255, 0, 0);
-uint32_t azul = strip.Color(0, 255, 255);
-uint32_t magenta = strip.Color(255, 0, 255);
+uint32_t verde = strip.Color(0, 50, 0);
+uint32_t vermelho = strip.Color(50, 0, 0);
+uint32_t azul = strip.Color(0, 50, 50);
+uint32_t magenta = strip.Color(50, 0, 50);
 int buttonState;            // the current reading from the input pin
 int lastButtonState = LOW;  // the previous reading from the input pin
 unsigned long lastDebounceTime = 0;  // the last time the output pin was toggled
@@ -93,9 +93,36 @@ void loop()
   else
   {
     teste = le_o_modulo_RFID();
-    Serial.println(teste);
-    lcd.setCursor(0, 1); //Coloca o cursor do display na coluna 1 e linha 2
-    lcd.print(teste);  // Comando de saida com a mensagem que deve aparecer na coluna 2 e linha 2
+    Serial.print(teste);
+    //lcd.setCursor(0, 1); //Coloca o cursor do display na coluna 1 e linha 2
+    //lcd.print(teste);  // Comando de saida com a mensagem que deve aparecer na coluna 2 e linha 2
+    if(teste == " 4B 47 F3 3E"){
+      lcd.clear();
+      lcd.setCursor(4, 0); //Coloca o cursor do display na coluna 1 e linha 2
+      lcd.print("BEM VINDO:");
+      lcd.setCursor(4, 1); //Coloca o cursor do display na coluna 1 e linha 2
+      lcd.print("RICARDO");
+      Serial.print(kDelimiter);
+      Serial.println("BEM VINDO RICARDO");
+    }
+    else if(teste == " 67 70 E7 F3" ){
+      lcd.clear();
+      lcd.setCursor(4, 0); //Coloca o cursor do display na coluna 1 e linha 2
+      lcd.print("BEM VINDO:");
+      lcd.setCursor(4, 1); //Coloca o cursor do display na coluna 1 e linha 2
+      lcd.print("BEATRIZ");
+      Serial.print(kDelimiter);
+      Serial.println("BEM VINDO BEATRIZ");
+    }
+    else {
+      lcd.clear();
+      lcd.setCursor(1, 0); //Coloca o cursor do display na coluna 1 e linha 2
+      lcd.print("ACESSO NEGADO:");
+      lcd.setCursor(4, 1); //Coloca o cursor do display na coluna 1 e linha 2
+      lcd.print("REGINALDO");
+      Serial.print(kDelimiter);
+      Serial.println("ACESSO NEGADO REGINALDO");
+    }
     mfrc522.PICC_HaltA();
   }
   
@@ -177,7 +204,7 @@ void le_a_serial()
     incomingByte = Serial.read();
 
     // say what you got:
-    Serial.print("I received: ");
+    //Serial.print("I received: ");
     if (incomingByte>55 || incomingByte<48)
     {
       Serial.println("erro");
@@ -185,8 +212,7 @@ void le_a_serial()
     else
     {
       int vaga_serial = incomingByte-48;
-      Serial.println(vaga_serial, DEC);
-      
+      //Serial.println(vaga_serial, DEC);
       if (status[vaga_serial]==verde)
       {
         status[vaga_serial]=azul;
